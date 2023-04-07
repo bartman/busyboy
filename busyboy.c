@@ -182,9 +182,8 @@ int main(int argc, char *argv[])
 	memset(last, 0, num_kids * sizeof(struct counter));
 	while(1) {
 		time_t now;
-		double score;
+		double score[num_kids];
 		double total_score = 0;
-		double total_sq_score = 0;
 		double min_score = best_rate;
 		double max_score = 0;
 
@@ -202,26 +201,33 @@ int main(int argc, char *argv[])
 			if (best_rate < lps)
 				best_rate = lps;
 
-			score = 100 * lps / best_rate;
+			score[k] = 100 * lps / best_rate;
 
 			if (show_summary) {
-				total_score += score;
-				total_sq_score += score*score;
-				min_score = min(min_score, score);
-				max_score = max(max_score, score);
+				total_score += score[k];
+				min_score = min(min_score, score[k]);
+				max_score = max(max_score, score[k]);
 			} else
-				printf(" %-6.3lg", score);
+				printf(" %-7.3lg", score[k]);
 		}
 
-		if (show_summary)
-			printf("%6.3lf   %6.3lf   %6.3lf   %6.3lf\n",
+		if (show_summary) {
+			double mean = total_score / num_kids;
+			double total_sq_deltas = 0;
+			for(k=0; k<num_kids; k++) {
+				double diff = score[k] - mean;
+				total_sq_deltas += diff * diff;
+			}
+
+			printf("%7.3lf   %7.3lf   %7.3lf   %7.3lf\n",
 					min_score,
-					total_score / num_kids,
+					mean,
 					max_score,
-					sqrt( total_sq_score / num_kids )
+					sqrt( total_sq_deltas / num_kids )
 					);
-		else
+		} else
 			printf("\n");
+
 		fflush(stdout);
 	
 		memcpy(last, curr, num_kids * sizeof(struct counter));

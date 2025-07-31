@@ -1,3 +1,4 @@
+/* this program reports number of loops it was able to execute compared to the baseline */
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,8 +33,9 @@ static void die(const char *fmt, ...)
 
 static void busy(unsigned loops)
 {
-	volatile int i;
-	for (i=0; i<loops; i++);
+	int i;
+	for (i=0; i<loops; i++)
+        asm volatile("" : : : "memory");
 }
 
 struct counter {

@@ -1,6 +1,6 @@
 CFLAGS = -O2 -std=gnu99 -g -Wall -lm
 
-TARGETS=busyboy
+TARGETS=busyboy sleepyboy
 
 .PHONY: all clean install install-links
 
@@ -8,6 +8,9 @@ all: ${TARGETS}
 
 busyboy: busyboy.c Makefile
 	$(CC) -o $@ $(CFLAGS) $< -lpthread -lm
+
+sleepyboy: sleepyboy.c Makefile
+	$(CC) -o $@ $(CFLAGS) $<
 
 clean:
 	-rm -f *.o *~ ${TARGETS}
